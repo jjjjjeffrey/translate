@@ -1,7 +1,5 @@
 # Swift, Java, Node.js, 或者Ruby？Swift 在服务器端的优势
 
-
-
 使用 Swift 作为服务端编程语言不仅让 client 和 server 端使用相同的编程语言成为可能，而且还可以复用 API 和代码。
 
 这个 [try!Swift](https://www.tryswiftnyc.com/) 课程将向你介绍应用程序开发中一个新的 client 和 server 的交互模型，并且向你展示怎样迅速构建一个 client 和 server 端都使用 Swift 语言写成的 App。
@@ -85,7 +83,7 @@
 如果你创建一个新的文件夹，你可以用 Swift package manager 来保存 Swift 的 package，它可以帮你创建一些样板代码，所以你准备好开始了：
 
     $ ~/> mkdir Blitter && cd Blitter
-$ ~/Blitter/> swift package init
+	$ ~/Blitter/> swift package init
 
     Creating library package: Blitter
     Creating Package.swift
@@ -101,7 +99,7 @@ $ ~/Blitter/> swift package init
 我们可以生成一个 Hello World App，还有一个用来添加测试用例的源文件。你们当中的大部分人可能都想要使用 Xcode 来进行开发，你可以用 Swift package manager 把这个 project 转变成一个 Xcode project：
 
     $ ~/Blitter/> swift package generate-xcodeproj
-$ ~/Blitter/> open Blitter.xcodeproj
+	$ ~/Blitter/> open Blitter.xcodeproj
 
 
 我喜欢用 Xcode 来开发，在开发后端代码的时候你可以用它单步调试，增加断点，类型检查，代码覆盖，性能分析，所有这些工具都可以工作在在后端 Swift 上。
@@ -176,7 +174,7 @@ public class BlitterController {
 
 我们该如何来添加 Facebook 的身份认证？我们有一个 **Credentials** 模块：
 
-```
+```swift
 import Credentials
 import CredentialsFacebook
 
@@ -188,7 +186,7 @@ credentials.register(CredentialsFacebook())
 
 如果你想要这些中间件来拦截请求，你得向路由注册这个 credential 的中间件。举个例子，当我作为一个作者想来发一条内容，我会向一个路由路径发起一个 POST 请求，然后中间件会检查我们的 username 是什么，然后将用这个用户：
 
-```
+```swift
 router.post("/", middleware: credentials)
 
 router.post("/") { request, response, next in}
@@ -204,7 +202,7 @@ router.post("/") { request, response, next in}
 
 一个 **Bleet** 拥有以下属性，我每次写一条新的，所有的粉丝将会得到一份拷贝：
 
-```
+```swift
 struct Bleet {
     
     var id             : UUID?
@@ -220,7 +218,7 @@ struct Bleet {
 
 你在写后端代码的时候，经常会用 JSON 来组织大量的数据，将一个结构体转换成字符串对这个概念非常有用。我们定义了一个协议来确保这种转换是可行的：
 
-```
+```swift
 typealias StringValuePair = [String : Any]
 
 protocol StringValuePairConvertible {
@@ -230,7 +228,7 @@ protocol StringValuePairConvertible {
 
 如果一个对象可以转换成字符串值，那么这种对象所组成的集合也应该同样可以进行这种转换：
 
-```
+```swift
 extension Array where Element : StringValuePairConvertible {
     var stringValuePairs: [StringValuePair] {
         return self.map { $0.stringValuePairs }
@@ -240,7 +238,7 @@ extension Array where Element : StringValuePairConvertible {
 
 我们可以将这个字符串值转换方法添加到 **Bleet** 中，我们就可以很容易饿将它转换成 JSON：
 
-```
+```swift
 extension Bleet: StringValuePairConvertible {
     var strongValuePairs: StringValuePair {
         var result = StringValuePair()
@@ -258,7 +256,7 @@ extension Bleet: StringValuePairConvertible {
 
 我们该如何给现有的结构体增加一种能力，可以将它们持久化或者说保存到数据库中？通过使用我们开发的 Cassandra 驱动，来扩展我们的 **Bleet**，使之具有 **Model** 行为。然后我们可以指定表名让 bleets 存储在那里，你将免费得到一套持久化函数：
 
-```
+```swift
 import Kassandra
 
 extension Bleet : Model {
@@ -270,22 +268,20 @@ extension Bleet : Model {
 
 举个例子，当我创建一个新的 **Bleet**，接着我可以链接数据库并调用 **.save()** 方法。数据持久化会非常简单：
 
-```
+```swift
 let bleet = Bleet(    id             : UUID(),
-                    author         : "Robert",
-                    subscriber     : "Chris",
-                    message     : "I love Swift!",
-                    postDate     : Date()
-
+					 author         : "Robert",
+                    		 subscriber     : "Chris",
+                    		 message     : "I love Swift!",
+                    		 postDate     : Date()
                 )
 
-try kassandra.connect(with: "blitter") { _ in bleet.save()
-}
+try kassandra.connect(with: "blitter") { _ in bleet.save() }
 ```
 
 也就是说，我们有一份订阅者清单的话，你想要为他们中的每个人都创建一个新的 bleet 并存储到数据库中。你可以将 subscriber map 到 bleet 的构造器中，然后你得到一个新的列表，接着你就可以愉快的调用 save 方法进行持久化了：
 
-```
+```swift
 // Get the subscribers ["Chris", "Ashley", "Emily"]
 let newbleets = [Bleet] = subscribers.map {
     return Bleet(    id             : UUID(),
@@ -302,7 +298,7 @@ newbleets.forEach { $0.save() { _ in } }
 
 对于异步错误处理，你常常会看到 APIs 会给你返回一个 value 还有 error，它们之间是互斥的：
 
-```
+```swift
 func doSomething(oncompletion: (Stuff?, Error?) -> Void) {
     
 }
@@ -310,7 +306,7 @@ func doSomething(oncompletion: (Stuff?, Error?) -> Void) {
 
 我推荐你利用一些语言特性来确保这种互斥，像这样：
 
-```
+```swift
 enum Result<T> {
     case success(T)
     case error(Error)
@@ -330,7 +326,7 @@ enum Result<T> {
 
 我们怎样获取一个 bleets 列表？我们可以连接数据库，拉取所有的 bleets，如果遇到错误，我们可以用 error 选项的参数来调用 **onComplete**。如果你取到了结果，那么你就可以用它们来创建 bleets，接着调用 **success** handler：
 
-```
+```swift
 func getBleets(oncomplete: Result<[Bleet]>) -> Void) {
     try kassandra.connect(with: "blitter") { _ in
         Bleet.fetch() { bleets, error in
@@ -349,7 +345,7 @@ func getBleets(oncomplete: Result<[Bleet]>) -> Void) {
 
 我们还可以处理条件判断。如果你想要根据作者的名字来获取 bleets，我们可以利用 Swift 重载运算符这个特性，用 **==** 得到的结果作为条件判断适用于我们的 query：
 
-```
+```swift
 Bleet.fetch(predicate: "author" == user,
             limit: 50) { bleets. error in
 
@@ -361,7 +357,7 @@ Bleet.fetch(predicate: "author" == user,
 
 最后，我想要展示给你如何来处理请求：
 
-```
+```swift
 getBleets { result in
     
     guard let bleets = result.value else {
@@ -385,7 +381,7 @@ getBleets { result in
 
 这种情况下，我们可以给 router request 对象加个扩展，检查一下有没有 body，如果有的话再检查一下它是不是 JSON，然后返回这个 JSON：
 
-```
+```swift
 extension RouterRequest {
     
     var json: Result<JSON> {
@@ -405,7 +401,7 @@ extension RouterRequest {
 
 当我们准备要存储这个 bleet 时，我们就可以接着从这个 JSON 中获取 message 并且保存：
 
-```
+```swift
 let userID = authenticate(request: request)
 
 let jsonResult = request.json
