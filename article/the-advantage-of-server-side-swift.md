@@ -108,7 +108,7 @@
 
 你可以通过 Package.swift 文件来指定依赖：
 
-```
+```swift
 // Package.swift
 import PackageDescription
 
