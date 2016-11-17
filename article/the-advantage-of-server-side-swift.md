@@ -269,11 +269,11 @@ extension Bleet : Model {
 举个例子，当我创建一个新的 **Bleet**，接着我可以链接数据库并调用 **.save()** 方法。数据持久化会非常简单：
 
 ```swift
-let bleet = Bleet(    id             : UUID(),
-					 author         : "Robert",
-                    		 subscriber     : "Chris",
-                    		 message     : "I love Swift!",
-                    		 postDate     : Date()
+let bleet = Bleet( id             : UUID(),
+				   author         : "Robert",
+				   subscriber     : "Chris",
+				   message        : "I love Swift!",
+				   postDate       : Date()
                 )
 
 try kassandra.connect(with: "blitter") { _ in bleet.save() }
@@ -284,11 +284,11 @@ try kassandra.connect(with: "blitter") { _ in bleet.save() }
 ```swift
 // Get the subscribers ["Chris", "Ashley", "Emily"]
 let newbleets = [Bleet] = subscribers.map {
-    return Bleet(    id             : UUID(),
-                    author         : userID,
-                    subscriber     : $0,
-                    message     : message,
-                    postDate     : Date())
+    return Bleet( id             : UUID(),
+				  author         : userID,
+				  subscriber     : $0,
+				  message        : message,
+				  postDate       : Date())
 }
 
 newbleets.forEach { $0.save() { _ in } }
